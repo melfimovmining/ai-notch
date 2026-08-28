@@ -1,0 +1,295 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1B2C3D4E5F6000000000010 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000001 /* AppDelegate.swift */; };
+		A1B2C3D4E5F6000000000011 /* DetailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000002 /* DetailCard.swift */; };
+		A1B2C3D4E5F6000000000012 /* HoverWatchdog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000003 /* HoverWatchdog.swift */; };
+		A1B2C3D4E5F6000000000013 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000004 /* Layout.swift */; };
+		A1B2C3D4E5F6000000000014 /* LoginItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000005 /* LoginItem.swift */; };
+		A1B2C3D4E5F6000000000015 /* Metric.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000006 /* Metric.swift */; };
+		A1B2C3D4E5F6000000000016 /* NotchPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000007 /* NotchPanel.swift */; };
+		A1B2C3D4E5F6000000000017 /* NotchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000008 /* NotchView.swift */; };
+		A1B2C3D4E5F6000000000018 /* PanelState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6000000000009 /* PanelState.swift */; };
+		A1B2C3D4E5F6000000000019 /* RingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F600000000000A /* RingView.swift */; };
+		A1B2C3D4E5F600000000001A /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F600000000000B /* Shapes.swift */; };
+		A1B2C3D4E5F600000000001B /* SideNotchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F600000000000C /* SideNotchApp.swift */; };
+		A1B2C3D4E5F600000000001C /* UsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F600000000000D /* UsageMonitor.swift */; };
+		A1B2C3D4E5F600000000001D /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F600000000000E /* UsageSnapshot.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A1B2C3D4E5F6000000000020 /* AI Notch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AI Notch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F6000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6000000000002 /* DetailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCard.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6000000000003 /* HoverWatchdog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverWatchdog.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6000000000004 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6000000000005 /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6000000000006 /* Metric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metric.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6000000000007 /* NotchPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPanel.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6000000000008 /* NotchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6000000000009 /* PanelState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelState.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F600000000000A /* RingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F600000000000B /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F600000000000C /* SideNotchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchApp.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F600000000000D /* UsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageMonitor.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F600000000000E /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F600000000001F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1B2C3D4E5F6000000000025 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1B2C3D4E5F6000000000021 = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6000000000022 /* SideNotch */,
+				A1B2C3D4E5F6000000000023 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F6000000000022 /* SideNotch */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6000000000001 /* AppDelegate.swift */,
+				A1B2C3D4E5F6000000000002 /* DetailCard.swift */,
+				A1B2C3D4E5F6000000000003 /* HoverWatchdog.swift */,
+				A1B2C3D4E5F6000000000004 /* Layout.swift */,
+				A1B2C3D4E5F6000000000005 /* LoginItem.swift */,
+				A1B2C3D4E5F6000000000006 /* Metric.swift */,
+				A1B2C3D4E5F6000000000007 /* NotchPanel.swift */,
+				A1B2C3D4E5F6000000000008 /* NotchView.swift */,
+				A1B2C3D4E5F6000000000009 /* PanelState.swift */,
+				A1B2C3D4E5F600000000000A /* RingView.swift */,
+				A1B2C3D4E5F600000000000B /* Shapes.swift */,
+				A1B2C3D4E5F600000000000C /* SideNotchApp.swift */,
+				A1B2C3D4E5F600000000000D /* UsageMonitor.swift */,
+				A1B2C3D4E5F600000000000E /* UsageSnapshot.swift */,
+				A1B2C3D4E5F600000000001F /* Info.plist */,
+			);
+			path = SideNotch;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F6000000000023 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6000000000020 /* AI Notch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1B2C3D4E5F6000000000027 /* SideNotch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3D4E5F600000000002A /* Build configuration list for PBXNativeTarget "SideNotch" */;
+			buildPhases = (
+				A1B2C3D4E5F6000000000024 /* Sources */,
+				A1B2C3D4E5F6000000000025 /* Frameworks */,
+				A1B2C3D4E5F6000000000026 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SideNotch;
+			productName = SideNotch;
+			productReference = A1B2C3D4E5F6000000000020 /* AI Notch.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1B2C3D4E5F6000000000028 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A1B2C3D4E5F6000000000027 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A1B2C3D4E5F6000000000029 /* Build configuration list for PBXProject "SideNotch" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1B2C3D4E5F6000000000021;
+			productRefGroup = A1B2C3D4E5F6000000000023 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1B2C3D4E5F6000000000027 /* SideNotch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3D4E5F6000000000026 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1B2C3D4E5F6000000000024 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F6000000000010 /* AppDelegate.swift in Sources */,
+				A1B2C3D4E5F6000000000011 /* DetailCard.swift in Sources */,
+				A1B2C3D4E5F6000000000012 /* HoverWatchdog.swift in Sources */,
+				A1B2C3D4E5F6000000000013 /* Layout.swift in Sources */,
+				A1B2C3D4E5F6000000000014 /* LoginItem.swift in Sources */,
+				A1B2C3D4E5F6000000000015 /* Metric.swift in Sources */,
+				A1B2C3D4E5F6000000000016 /* NotchPanel.swift in Sources */,
+				A1B2C3D4E5F6000000000017 /* NotchView.swift in Sources */,
+				A1B2C3D4E5F6000000000018 /* PanelState.swift in Sources */,
+				A1B2C3D4E5F6000000000019 /* RingView.swift in Sources */,
+				A1B2C3D4E5F600000000001A /* Shapes.swift in Sources */,
+				A1B2C3D4E5F600000000001B /* SideNotchApp.swift in Sources */,
+				A1B2C3D4E5F600000000001C /* UsageMonitor.swift in Sources */,
+				A1B2C3D4E5F600000000001D /* UsageSnapshot.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1B2C3D4E5F600000000002B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F600000000002C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A1B2C3D4E5F600000000002D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SideNotch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sidenotch.SideNotch;
+				PRODUCT_NAME = "AI Notch";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F600000000002E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SideNotch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sidenotch.SideNotch;
+				PRODUCT_NAME = "AI Notch";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1B2C3D4E5F6000000000029 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F600000000002B /* Debug */,
+				A1B2C3D4E5F600000000002C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B2C3D4E5F600000000002A = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F600000000002D /* Debug */,
+				A1B2C3D4E5F600000000002E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1B2C3D4E5F6000000000028 /* Project object */;
+}
