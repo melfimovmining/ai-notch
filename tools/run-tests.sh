@@ -13,6 +13,9 @@ TARGET="$(uname -m)-apple-macos14.0"
 
 # Every app source except the two that define the app's own @main.
 APP_SOURCES=(
+  SideNotch/AdminAPI.swift
+  SideNotch/AdminCredentials.swift
+  SideNotch/CostMonitor.swift
   SideNotch/DetailCard.swift
   SideNotch/HoverWatchdog.swift
   SideNotch/Layout.swift
@@ -53,6 +56,7 @@ trap 'rm -rf "$TMPDIR_TEST"' EXIT
 run_harness HitTestingTests
 run_harness AutoCollapseTests
 run_harness UsageMonitorTests "$TMPDIR_TEST"
+run_harness CostMapperTests
 
 echo
 if [ "$failures" -eq 0 ]; then

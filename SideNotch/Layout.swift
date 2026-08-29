@@ -30,10 +30,19 @@ enum Layout {
     /// Distance between the centres of two consecutive rings.
     static var itemStride: CGFloat { itemHeight + ringSpacing }
 
+    /// How many rings the geometry is currently sized for. Set once at launch
+    /// from the number of metrics on screen; the spend ring is optional, so
+    /// this is not a constant.
+    static var ringCount: Int = 3
+
     /// Height of the black bar's straight body.
-    static var notchBodyHeight: CGFloat {
-        notchVerticalPadding * 2 + itemHeight * 3 + ringSpacing * 2
+    static func notchBodyHeight(rings: Int) -> CGFloat {
+        let rings = max(rings, 1)
+        return notchVerticalPadding * 2 + itemHeight * CGFloat(rings)
+            + ringSpacing * CGFloat(rings - 1)
     }
+
+    static var notchBodyHeight: CGFloat { notchBodyHeight(rings: ringCount) }
 
     /// Total height of the notch shape, including the fillet overhang.
     static var notchShapeHeight: CGFloat { notchBodyHeight + filletRadius * 2 }

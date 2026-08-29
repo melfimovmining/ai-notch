@@ -3,6 +3,7 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var controller: NotchPanelController?
     private let monitor = UsageMonitor()
+    private let cost = CostMonitor()
     private let state = PanelState.restored()
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -18,8 +19,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
 
         monitor.start()
+        cost.start()
 
-        let controller = NotchPanelController(monitor: monitor, state: state)
+        let controller = NotchPanelController(monitor: monitor, cost: cost, state: state)
         controller.show()
         self.controller = controller
     }

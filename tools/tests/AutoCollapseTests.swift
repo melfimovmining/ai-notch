@@ -32,7 +32,8 @@ struct AutoCollapseTests {
         _ = NSApplication.shared
         let state = PanelState(expanded: true)
         let controller = NotchPanelController(
-            monitor: UsageMonitor(directory: URL(fileURLWithPath: "/nonexistent")), state: state)
+            monitor: UsageMonitor(directory: URL(fileURLWithPath: "/nonexistent")),
+            cost: CostMonitor(), state: state)
         controller.show()
 
         let bar = controller.barScreenFrame

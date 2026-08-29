@@ -86,8 +86,11 @@ final class NotchPanelController: NSObject, NSMenuDelegate {
     /// Gap between the menu bar and the top of the notch.
     private let topInset: CGFloat = 0
 
-    init(monitor: UsageMonitor, state: PanelState) {
+    private let cost: CostMonitor
+
+    init(monitor: UsageMonitor, cost: CostMonitor, state: PanelState) {
         self.state = state
+        self.cost = cost
         let size = NSSize(width: Layout.panelWidth, height: Layout.panelHeight)
         panel = NotchPanel(contentRect: NSRect(origin: .zero, size: size))
 
@@ -95,7 +98,8 @@ final class NotchPanelController: NSObject, NSMenuDelegate {
         super.init()
         container.autoresizingMask = [.width, .height]
 
-        let hosting = ClickThroughHostingView(rootView: NotchRootView(monitor: monitor, state: state))
+        let hosting = ClickThroughHostingView(
+            rootView: NotchRootView(monitor: monitor, cost: cost, state: state))
         hosting.frame = container.bounds
         hosting.autoresizingMask = [.width, .height]
         if #available(macOS 13.0, *) {
@@ -109,7 +113,29 @@ final class NotchPanelController: NSObject, NSMenuDelegate {
             self?.applyInteractiveRect(expanded: expanded)
         }
 
+        // The bar is exactly as tall as its rings, so gaining or losing the
+        // spend ring means resizing and re-parking the whole panel.
+        Layout.ringCount = cost.metric == nil ? 3 : 4
+        cost.onRingCountChange = { [weak self] in
+            Layout.ringCount = cost.metric == nil ? 3 : 4
+            self?.reposition()
+            self?.applyInteractiveRect(expanded: self?.state.isExpanded ?? false)
+        }
+
         let menu = NSMenu()
+        let keyItem = NSMenuItem(title: "Set Admin API Key…",
+                                 action: #selector(setAdminKey),
+                                 keyEquivalent: "")
+        keyItem.target = self
+        menu.addItem(keyItem)
+
+        let budgetItem = NSMenuItem(title: "Set Credit Balance…",
+                                    action: #selector(setBudget),
+                                    keyEquivalent: "")
+        budgetItem.target = self
+        menu.addItem(budgetItem)
+        menu.addItem(.separator())
+
         let loginItem = NSMenuItem(title: "Open at Login",
                                    action: #selector(toggleLoginItem),
                                    keyEquivalent: "")
@@ -191,10 +217,121 @@ final class NotchPanelController: NSObject, NSMenuDelegate {
     /// Refresh the checkmark each time the menu opens — the user can also flip
     /// this in System Settings.
     func menuNeedsUpdate(_ menu: NSMenu) {
-        guard let item = menu.items.first(where: { $0.action == #selector(toggleLoginItem) })
-        else { return }
-        item.state = LoginItem.isEnabled ? .on : .off
-        item.toolTip = "Open at Login: \(LoginItem.statusDescription)"
+        if let item = menu.items.first(where: { $0.action == #selector(toggleLoginItem) }) {
+            item.state = LoginItem.isEnabled ? .on : .off
+            item.toolTip = "Open at Login: \(LoginItem.statusDescription)"
+        }
+        if let item = menu.items.first(where: { $0.action == #selector(setBudget) }) {
+            item.title = AdminCredentials.creditBalance.map {
+                "Set Credit Balance… (\(CostMapper.money($0)))"
+            } ?? "Set Credit Balance…"
+        }
+        if let item = menu.items.first(where: { $0.action == #selector(setAdminKey) }) {
+            item.title = AdminCredentials.hasKey
+                ? "Change Admin API Key…" : "Set Admin API Key…"
+        }
+    }
+
+    // MARK: - Spend ring settings
+
+    @objc private func setAdminKey() {
+        let alert = NSAlert()
+        alert.messageText = "Anthropic Admin API Key"
+        alert.informativeText = """
+        Usage and cost reports need an Admin API key (sk-ant-admin01-…), an \
+        org:admin OAuth token, or a personal key that is not scoped to a \
+        workspace. A workspace-scoped key will not work, and the Admin API is \
+        unavailable for individual accounts.
+
+        The key is stored in your Keychain.
+        """
+        let field = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 320, height: 24))
+        field.placeholderString = "sk-ant-admin01-…"
+        field.stringValue = AdminCredentials.key ?? ""
+        alert.accessoryView = field
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+        if AdminCredentials.hasKey { alert.addButton(withTitle: "Remove") }
+
+        NSApp.activate(ignoringOtherApps: true)
+        switch alert.runModal() {
+        case .alertFirstButtonReturn:
+            AdminCredentials.setKey(field.stringValue)
+            cost.refresh()
+            verifyKey(field.stringValue)
+        case .alertThirdButtonReturn:
+            AdminCredentials.setKey(nil)
+            cost.refresh()
+        default:
+            break
+        }
+    }
+
+    /// Calls the API once so a bad key is reported now, rather than as a silent
+    /// "Unavailable" on the ring a minute later.
+    private func verifyKey(_ key: String) {
+        let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        let start = CostMonitor.windowStart(anchor: AdminCredentials.balanceAnchor)
+
+        Task { @MainActor in
+            do {
+                _ = try await AdminAPI.costReport(key: trimmed, from: start, to: Date())
+            } catch let error as AdminAPIError {
+                let alert = NSAlert()
+                alert.alertStyle = .warning
+                alert.messageText = "That key did not work"
+                alert.informativeText = error.longDescription
+                alert.addButton(withTitle: "OK")
+                NSApp.activate(ignoringOtherApps: true)
+                alert.runModal()
+            } catch {
+                NSLog("AI Notch: key check failed: %@", error.localizedDescription)
+            }
+        }
+    }
+
+    @objc private func setBudget() {
+        let alert = NSAlert()
+        alert.messageText = "API Credit Balance"
+        alert.informativeText = """
+        Enter the "Remaining balance" shown on the Console billing page. AI \
+        Notch subtracts your API spend from it every minute, so the ring counts \
+        down on its own.
+
+        It cannot see credit purchases — Anthropic publishes no endpoint for \
+        the balance or for top-ups — so re-enter this after you buy credits. \
+        The ring tells you when that is due.
+        """
+        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 120, height: 24))
+        field.placeholderString = "35.10"
+        if let balance = AdminCredentials.creditBalance {
+            field.stringValue = String(format: "%.2f", balance)
+        }
+        alert.accessoryView = field
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+        if AdminCredentials.hasBalance { alert.addButton(withTitle: "Clear") }
+
+        NSApp.activate(ignoringOtherApps: true)
+        switch alert.runModal() {
+        case .alertFirstButtonReturn:
+            let cleaned = field.stringValue
+                .trimmingCharacters(in: .whitespaces)
+                .replacingOccurrences(of: "$", with: "")
+                .replacingOccurrences(of: ",", with: "")
+            if let value = Double(cleaned), value > 0 {
+                // Setting the balance also stamps "as of now"; spend is counted
+                // from that moment on.
+                AdminCredentials.creditBalance = value
+                cost.refresh()
+            }
+        case .alertThirdButtonReturn:
+            AdminCredentials.creditBalance = nil
+            cost.refresh()
+        default:
+            break
+        }
     }
 
     @objc private func toggleLoginItem() {

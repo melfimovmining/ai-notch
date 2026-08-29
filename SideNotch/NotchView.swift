@@ -4,10 +4,17 @@ import SwiftUI
 /// is collapsed/expanded.
 struct NotchRootView: View {
     let monitor: UsageMonitor
+    let cost: CostMonitor
     let state: PanelState
 
     var body: some View {
-        NotchView(metrics: monitor.metrics, state: state)
+        NotchView(metrics: metrics, state: state)
+    }
+
+    /// The three local rings, plus the spend ring once an admin key is set.
+    private var metrics: [Metric] {
+        guard let spend = cost.metric else { return monitor.metrics }
+        return monitor.metrics + [spend]
     }
 }
 

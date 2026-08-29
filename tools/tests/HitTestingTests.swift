@@ -11,7 +11,7 @@ struct HitTestingTests {
 
         let state = PanelState(expanded: false)          // start collapsed
         let monitor = UsageMonitor(directory: URL(fileURLWithPath: "/nonexistent"))
-        let controller = NotchPanelController(monitor: monitor, state: state)
+        let controller = NotchPanelController(monitor: monitor, cost: CostMonitor(), state: state)
         controller.show()
 
         guard let panel = NSApp.windows.first(where: { $0 is NSPanel }),

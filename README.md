@@ -5,12 +5,15 @@ name; only the product is called AI Notch.)*
 
 A macOS HUD with no Dock icon and no menu bar item. It sits out of the way as a
 small tab on the right edge of the screen; click the tab and it expands into a
-black "notch" bar showing three usage rings. Hovering a ring slides out a card
+black "notch" bar showing three usage rings — four, once you connect an API
+key for spend. Hovering a ring slides out a card
 to its left with the details. It collapses again on its own once the pointer
 leaves the bar (or immediately, if you click the bar).
 
 Out of the box it shows **your real Claude usage** — the same 5-hour and 7-day
-limit numbers Claude Code shows in `/usage` — fed by a status line script.
+limit numbers Claude Code shows in `/usage` — fed by a status line script. Add
+an Admin API key and a fourth ring counts down your remaining **API credit**;
+see [Connecting API spend](#connecting-api-spend).
 
 ## Install it
 
@@ -162,10 +165,8 @@ or adding a source is a contained change:
   headers — `*-limit`/`*-remaining` are counts, `*-reset` is an RFC 3339
   timestamp. Exact and cheap to read, but they describe your *organization's*
   API rate limits, not a Claude subscription.
-- **Org spend:** the Admin API usage and cost reports
-  (`GET /v1/organizations/usage_report/messages`, `/v1/organizations/cost_report`)
-  need an Admin API key and are raw HTTP only — good for a "spend this month"
-  ring.
+- **Org spend:** built — see [Connecting API spend](#connecting-api-spend)
+  below.
 - **Local token history:** `~/.claude/projects/**/*.jsonl` records `usage` (input,
   output, and cache tokens) per assistant message with a timestamp. Enough to
   compute your own rolling windows offline; it has no server-side limit
@@ -173,6 +174,98 @@ or adding a source is a contained change:
 
 There is no public API for the Claude.ai subscription usage numbers themselves —
 the status line is the supported way to get them onto your desktop.
+
+## Connecting API spend
+
+The fourth ring counts down your remaining **API credit**. It is separate from
+the three rings above in every way that matters: those read local files and work
+offline, this one talks to the network and needs a credential you supply. If the
+key is missing or rejected the ring is simply absent or shows an error — the
+other three carry on.
+
+**The ring only appears once a key is set.** Right-click the tab →
+**Set Admin API Key…**, then **Set Credit Balance…**.
+
+| Ring | Remaining credit, draining from full to empty |
+| --- | --- |
+| Card, row 1 | `$8.86 left · 25%` against "of $35.10 recorded" |
+| Card, row 2 | Spend since the balance was recorded, tokens, and your priciest model |
+
+The ring is green above 25% remaining, yellow below it, orange below 10%.
+
+### What has to be typed in, and why
+
+**Anthropic publishes no endpoint for the credit balance, and none for top-ups.**
+Not in the Admin API reference — which covers organizations, invites, users, RBAC,
+workspaces, rate limits, API keys and CMEK, and nothing billing-related — and not
+anywhere else. The Console shows the balance because it renders the figure
+server-side behind your session cookie; there is no REST route an API key can
+call. `cost_report` returns only usage costs (`tokens`, `web_search`,
+`code_execution`, `session_usage`); credit purchases never appear in it.
+
+So the balance is an **anchor you enter once**, and the app subtracts spend from
+it every minute:
+
+```
+remaining = the balance you recorded − API spend since you recorded it
+```
+
+That is fully automatic until you **buy credits**, which the app cannot see. When
+spend passes the recorded balance the ring goes orange and reads
+**"Out of credit — bought more? Right-click → Set Credit Balance"**, rather than
+drifting silently or showing a negative number. Re-enter the figure from the
+Console and it resumes.
+
+If you would rather not maintain it at all, leave the balance unset: the ring
+falls back to showing plain month-to-date spend.
+
+### The credential
+
+This is the part that most often goes wrong. The two endpoints are part of the
+**Admin API**, and they do not accept an ordinary API key:
+
+- An **Admin API key** (`sk-ant-admin01-…`), created in the Console under
+  Organization settings → API keys, **or**
+- an `org:admin` **OAuth token**, **or**
+- a **personal key that is not scoped to a workspace**.
+
+A workspace-scoped key is rejected with 401 even though it sends messages
+perfectly well, and the Admin API is unavailable to accounts with no
+organization, where the routes 404. AI Notch calls the API when you save a key
+and tells you which of those happened, rather than leaving you with a silent
+"Unavailable" on the ring.
+
+The key is stored in the **Keychain**, not `UserDefaults`. This matters: an Admin
+API key is not read-only. The same credential can list and deactivate your
+organization's API keys, change member roles, and remove members. A plist in
+`~/Library/Preferences` is readable by anything running as you.
+
+### Endpoints and cadence
+
+```
+GET /v1/organizations/cost_report?starting_at=…&bucket_width=1d&group_by[]=description
+GET /v1/organizations/usage_report/messages?starting_at=…&bucket_width=1d
+```
+
+Both are raw HTTP — deliberately absent from every Anthropic SDK, and there is
+no Swift SDK regardless — so `AdminAPI.swift` speaks REST with `URLSession`.
+Polling is once a minute, the documented sustained rate; the data itself only
+settles within about five minutes of a request, so faster buys nothing.
+
+Four details worth knowing if you touch this code:
+
+- **`amount` is a decimal string in cents.** `"123.45"` means $1.2345. It stays
+  a `Decimal` from parse to display — converting to `Double` before rounding
+  loses half-cent figures, because $5.005 is not representable in binary and
+  truncates down to $5.00.
+- **Both reports paginate.** One request caps at 31 daily buckets, and an anchor
+  older than a month needs more; `AdminAPI` follows `next_page` until the report
+  is exhausted, with a 400-bucket stop so a bad cursor cannot loop forever.
+- **Buckets are UTC days.** The window starts at the beginning of the anchor's
+  UTC day, which counts any spend earlier that same day. That errs towards
+  *under*-stating your remaining balance, never over-stating it.
+- **The bar's height follows the ring count** (`Layout.ringCount`), so gaining or
+  losing this ring re-parks the whole panel.
 
 ## The icon
 
@@ -215,6 +308,9 @@ Note: on macOS 26 with a monochrome icon appearance selected, the system draws
 | `Metric.swift` | Ring/row model plus the placeholder data |
 | `UsageSnapshot.swift` | Decodes the status line JSON, maps it to rings |
 | `UsageMonitor.swift` | Watches `~/.sidenotch/sessions/`, republishes metrics |
+| `AdminAPI.swift` | Raw-HTTP client for the Admin API usage and cost reports |
+| `AdminCredentials.swift` | Keychain storage for the admin key; the balance anchor |
+| `CostMonitor.swift` | Polls those reports once a minute, maps them to the balance ring |
 
 Panel behaviour worth knowing:
 
@@ -231,6 +327,8 @@ Panel behaviour worth knowing:
   removing a display keeps it glued to the right edge.
 - The monitor refreshes on file changes *and* on a 30-second timer, so the
   "Resets in 51 min" countdowns keep ticking while nothing else happens.
+- The bar's height is a function of how many rings it holds, so gaining or
+  losing the balance ring re-parks the whole panel (`Layout.ringCount`).
 
 ## Changing things
 
@@ -251,7 +349,7 @@ Panel behaviour worth knowing:
 ./tools/run-tests.sh
 ```
 
-Three harnesses, each compiled as its own binary against the live sources (a
+Four harnesses, each compiled as its own binary against the live sources (a
 panel flashes on screen while they run):
 
 | Harness | Checks |
@@ -259,6 +357,7 @@ panel flashes on screen while they run):
 | `HitTestingTests` | Clicks reach the tab (collapsed) and the bar (expanded); the transparent rest of the panel stays click-through |
 | `AutoCollapseTests` | `HoverWatchdog` timing rules, the bar's on-screen geometry, and that an abandoned bar collapses itself |
 | `UsageMonitorTests` | `UsageMonitor` notices a session file written the way the status line script writes it |
+| `CostMapperTests` | Cost/usage reports decode from the documented shapes; cents-denominated `amount` strings become the right dollars; the balance counts down and never goes negative |
 
 `tools/tests/` also holds three diagnostics that print rather than assert:
 `GeometryDump` (interactive rects), `WindowDump` (live panel frame and window

@@ -41,6 +41,7 @@ extension Color {
     static let notchOrange = Color(red: 1.00, green: 0.38, blue: 0.16)
     static let notchGreen = Color(red: 0.20, green: 0.90, blue: 0.44)
     static let notchYellow = Color(red: 0.92, green: 0.93, blue: 0.20)
+    static let notchBlue = Color(red: 0.35, green: 0.60, blue: 1.00)
 }
 
 extension Metric {
