@@ -1,5 +1,6 @@
 import AppKit
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var controller: NotchPanelController?
     private let monitor = UsageMonitor()

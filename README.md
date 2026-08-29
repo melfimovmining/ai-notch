@@ -266,6 +266,12 @@ Four details worth knowing if you touch this code:
   *under*-stating your remaining balance, never over-stating it.
 - **The bar's height follows the ring count** (`Layout.ringCount`), so gaining or
   losing this ring re-parks the whole panel.
+- **`CostMonitor` is `@MainActor`, and that is load-bearing.** Publishing a
+  metric can change the ring count, which resizes the panel — an AppKit call.
+  Without the annotation `poll` resumes on a background cooperative thread
+  after its `await` and the window resize trips AppKit's main-thread
+  assertion, crashing on the first successful poll. The requests themselves
+  still run off-main; only the state change comes back.
 
 ## The icon
 

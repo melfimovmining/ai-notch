@@ -9,7 +9,14 @@ import SwiftUI
 /// to the network, needs a credential the user has to supply, and can fail in
 /// ways worth showing. Keeping them apart means a broken or absent API key
 /// never disturbs the three rings that work offline.
+///
+/// `@MainActor` is load-bearing, not decoration: publishing a metric can change
+/// the ring count, which resizes and re-parks the panel. That is an AppKit call,
+/// and `poll` resumes on a background cooperative thread after its `await`
+/// unless the whole type is pinned to the main actor. The network requests still
+/// run off-main; only the state change comes back here.
 @Observable
+@MainActor
 final class CostMonitor {
     /// Nil whenever there is no ring to show — no key set, or the first poll
     /// has not resolved yet. The notch simply renders three rings then.
@@ -28,15 +35,21 @@ final class CostMonitor {
     private var timer: Timer?
     private var inFlight: Task<Void, Never>?
 
-    deinit {
+    /// Not a `deinit`: that is nonisolated and cannot touch main-actor state.
+    /// The monitor lives as long as the app does, so teardown is explicit and in
+    /// practice only the tests use it.
+    func stop() {
         timer?.invalidate()
+        timer = nil
         inFlight?.cancel()
+        inFlight = nil
     }
 
     func start() {
         refresh()
         let timer = Timer(timeInterval: Self.interval, repeats: true) { [weak self] _ in
-            self?.refresh()
+            // Added to the main run loop below, so this fires on main.
+            MainActor.assumeIsolated { self?.refresh() }
         }
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer

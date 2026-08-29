@@ -67,6 +67,7 @@ final class ClickThroughHostingView<Content: View>: NSHostingView<Content> {
 
 /// Owns the panel: builds it, hosts the SwiftUI view, and keeps it parked at the
 /// top-right of the screen across display changes.
+@MainActor
 final class NotchPanelController: NSObject, NSMenuDelegate {
     private let panel: NotchPanel
     private let container: PassthroughView
@@ -153,7 +154,8 @@ final class NotchPanelController: NSObject, NSMenuDelegate {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.reposition()
+            // Delivered on `.main` per the observer above.
+            MainActor.assumeIsolated { self?.reposition() }
         }
     }
 
@@ -191,7 +193,8 @@ final class NotchPanelController: NSObject, NSMenuDelegate {
         guard pointerTimer == nil else { return }
         watchdog.reset()
         let timer = Timer(timeInterval: pollInterval, repeats: true) { [weak self] _ in
-            self?.checkPointer()
+            // Added to the main run loop below, so this fires on main.
+            MainActor.assumeIsolated { self?.checkPointer() }
         }
         RunLoop.main.add(timer, forMode: .common)
         pointerTimer = timer
